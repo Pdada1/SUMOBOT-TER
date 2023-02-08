@@ -20,4 +20,5 @@ void loop()
   digitalWrite(leftBackward , LOW);
   digitalWrite(rightForward , HIGH);
   digitalWrite(rightBackward , LOW);
+  printf("Something was changed");
 }
