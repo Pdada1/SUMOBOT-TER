@@ -22,3 +22,37 @@ void loop()
   digitalWrite(rightBackward , LOW);
   printf("Something was changed");
 }
+void attack()
+{
+  // Aims to push enemy bot out of circle
+}
+
+void defend()
+{
+  // Aims to prevent being pushed out of the circle
+}
+
+void leftTurn()
+{
+  // Turns the bot left for defense and to get into attacking position
+}
+
+void rightTurn()
+{
+  // Turns the bot right for defense and to get into attacking position
+}
+
+void charge()
+{
+  // Motors set to full speed forwards to attack
+}
+
+void moveForward ()
+{
+  // Moves the bot forwards
+}
+
+void moveBackward ()
+{
+  // Moves the bot backwards+
+}
