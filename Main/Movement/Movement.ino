@@ -2,9 +2,7 @@
 //I have not declared enable pins because I want the motor to run when I turn it on.
 // If you want to turn on the motor manually then you can connect the enable pin.
 const int left = 8;
-const int left = 9;
-const int right = 10;
-const int right = 11;
+const int right = 9;
 Sensor sense = new Sensor();
 void setup()
 {
