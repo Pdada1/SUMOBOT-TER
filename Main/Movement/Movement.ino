@@ -1,58 +1,104 @@
 //Declaring the pins for controlling the motors.
 //I have not declared enable pins because I want the motor to run when I turn it on.
 // If you want to turn on the motor manually then you can connect the enable pin.
-const int leftForward = 8;
-const int leftBackward = 9;
-const int rightForward = 10;
-const int rightBackward = 11;
+const int left = 8;
+const int left = 9;
+const int right = 10;
+const int right = 11;
+Sensor sense = new Sensor();
 void setup()
 {
-  pinMode(leftForward , OUTPUT);
-  pinMode(leftBackward , OUTPUT);
-  pinMode(rightForward , OUTPUT);
-  pinMode(rightBackward , OUTPUT);
+  pinMode(left , OUTPUT);
+  pinMode(right , OUTPUT);
+  while (true) {
+    // Ensures bot is safe by moving away from white line boundary toward center of circle
+    avoidBoundaryLeft();
+    avoidBoundaryRight();
+    avoidBoundaryBack();
+    // Turns to get into attacking position when enemy bot is directly in front
+    while (!sense.inFront()) {
+      leftTurn();
+    }
+    attack(); // Aims to knock enemy bot out of circle
+  }  
 }
-void loop()
-{
-//One pin should be HIGH and the other should be LOW for the motor to turn in one
-  direction. By reversing, you can change the direction of the motors.
-  digitalWrite(leftForward , HIGH);
-  digitalWrite(leftBackward , LOW);
-  digitalWrite(rightForward , HIGH);
-  digitalWrite(rightBackward , LOW);
-  printf("Something was changed");
-}
+
 void attack()
 {
-  // Aims to push enemy bot out of circle
+  // Aims to knock enemy bot out of circle
+  // Charges
+  while (sense.inFront()) {
+    digitalWrite(left, HIGH);
+    digitalWrite(right, HIGH);
+  }
+  // Brakes if enemy bot has dodged
+  digitalWrite(left, LOW);
+  digitalWrite(right, LOW);
 }
 
-void defend()
-{
-  // Aims to prevent being pushed out of the circle
+void avoidBoundaryLeft () {
+  // Helps the bot avoid danger by moving away when boundary on left
+  while (sense.lineLeft()) {
+    rightTurn90(); // Needs to be 90 degrees through trial and error to ensure we are moving towards inside of circle
+    moveForward(); // Moves to center of circle to avoid boundary
+  } 
 }
 
-void leftTurn()
+void avoidBoundaryRight () {
+  // Helps the bot avoid danger by moving away when boundary on right
+  while (sense.lineRight()) {
+    leftTurn90(); // Needs to be 90 degrees through trial and error to ensure we are moving towards inside of circle
+    moveForward(); // Moves to center of circle to avoid boundary
+  }
+}
+
+void avoidBoundaryBack () {
+  // Helps the bot avoid danger by moving away when boundary on back
+  while (sense.lineBehind()) {
+    rightTurn180(); // Needs to be 180 degrees through trial and error to ensure we are moving towards inside of circle
+    moveForward(); // Moves to center of circle to avoid boundary
+  }
+}
+
+void moveForward () {
+  // Moves bot forward slightly to avoid boundary
+  // Bot moves forward for 1 second
+  digitalWrite(left, HIGH);
+  digitalWrite(right, HIGH);
+  delay (1000);
+  // Brakes the bot
+  digitalWrite(left, LOW);
+  digitalWrite(right, LOW);
+}
+
+void leftTurn ()
 {
-  // Turns the bot left for defense and to get into attacking position
+  // Turns the bot right for defense and to get into attacking position by making one wheel spin faster
+  digitalWrite(left, LOW);
+  digitalWrite(right, HIGH);
 }
 
 void rightTurn()
 {
-  // Turns the bot right for defense and to get into attacking position
+  // Turns the bot right for defense and to get into attacking position by making one wheel spin faster
+  digitalWrite(right, LOW);
+  digitalWrite(left, HIGH);
 }
 
-void charge()
-{
-  // Motors set to full speed forwards to attack
+void leftTurn90 () {
+  // Turns the bot left 90 degrees
+  digitalWrite(left, LOW);
+  digitalWrite(right, HIGH);
+  delay(/*x*/); // x to be determined upon testing rotation speed
+  digitalWrite(left, LOW);
+  digitalWrite(right, LOW);
 }
 
-void moveForward ()
-{
-  // Moves the bot forwards
-}
-
-void moveBackward ()
-{
-  // Moves the bot backwards+
+void rightTurn90 () {
+  // Turns the bot right 90 degrees
+  digitalWrite(right, LOW);
+  digitalWrite(left, HIGH);
+  delay(/*x*/); // x to be determined upon testing rotation speed
+  digitalWrite(left, LOW);
+  digitalWrite(right, LOW);
 }
