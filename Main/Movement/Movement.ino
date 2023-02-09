@@ -1,6 +1,14 @@
 //Declaring the pins for controlling the motors.
 //I have not declared enable pins because I want the motor to run when I turn it on.
 // If you want to turn on the motor manually then you can connect the enable pin.
+
+
+
+// Turn off Motors by setting pinMode to something other than OUTPUT
+// Motors run in one direction by using digitalWrite with one left and one right
+
+
+
 const int left = 8;
 const int right = 9;
 Sensor sense = new Sensor();
