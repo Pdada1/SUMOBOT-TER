@@ -9,21 +9,32 @@
 
 
 
-const int left = 8;
-const int right = 9;
+const int leftForward = 8;
+const int leftBackward = 9;
+const int rightForward = 10;
+const int rightBackward = 10;
 Sensor sense = new Sensor();
 void setup()
 {
-  pinMode(left , OUTPUT);
-  pinMode(right , OUTPUT);
+  pinMode(leftForward, OUTPUT);
+  pinMode(leftBackward, OUTPUT);
+  pinMode(rightForward, OUTPUT);
+  pinMODE(rightBackward, OUTPUT);
   while (true) {
     // Ensures bot is safe by moving away from white line boundary toward center of circle
     avoidBoundaryLeft();
     avoidBoundaryRight();
     avoidBoundaryBack();
     // Turns to get into attacking position when enemy bot is directly in front
+    // Chooses random direction to turn to make bot movement unpredictable
+    int rand = random()%2; // Generates 0 or 1     
     while (!sense.inFront()) {
-      leftTurn();
+      if (rand == 0) {
+        leftTurn();        
+      }
+      else {
+        rightTurn();
+      }
     }
     attack(); // Aims to knock enemy bot out of circle
   }  
@@ -34,12 +45,16 @@ void attack()
   // Aims to knock enemy bot out of circle
   // Charges
   while (sense.inFront()) {
-    digitalWrite(left, HIGH);
-    digitalWrite(right, HIGH);
+    digitalWrite(leftForward, LOW);
+    digitalWrite(leftBackward, HIGH);
+    digitalWrite(rightForward, LOW);
+    digitalWrite(rightBackward, HIGH);
   }
   // Brakes if enemy bot has dodged
-  digitalWrite(left, LOW);
-  digitalWrite(right, LOW);
+  digitalWrite(leftForward, LOW);
+  digitalWrite(leftBackward, LOW);
+  digitalWrite(rightForward, LOW);
+  digitalWrite(rightBackward, LOW);
 }
 
 void avoidBoundaryLeft () {
@@ -69,42 +84,52 @@ void avoidBoundaryBack () {
 void moveForward () {
   // Moves bot forward slightly to avoid boundary
   // Bot moves forward for 1 second
-  digitalWrite(left, HIGH);
-  digitalWrite(right, HIGH);
+  digitalWrite(leftForward, LOW);
+  digitalWrite(leftBackward, HIGH);
+  digitalWrite(rightForward, LOW);
+  digitalWrite(rightBackward, HIGH);
   delay (1000);
   // Brakes the bot
-  digitalWrite(left, LOW);
-  digitalWrite(right, LOW);
+  digitalWrite(leftForward, LOW);
+  digitalWrite(leftBackward, LOW);
+  digitalWrite(rightForward, LOW);
+  digitalWrite(rightBackward, LOW);
 }
 
 void leftTurn ()
 {
   // Turns the bot right for defense and to get into attacking position by making one wheel spin faster
-  digitalWrite(left, LOW);
-  digitalWrite(right, HIGH);
+  digitalWrite(leftForward, LOW);
+  digitalWrite(leftBackward, HIGH);
+  digitalWrite(rightForward, HIGH);
+  digitalWrite(rightBackward, LOW);
 }
 
 void rightTurn()
 {
   // Turns the bot right for defense and to get into attacking position by making one wheel spin faster
-  digitalWrite(right, LOW);
-  digitalWrite(left, HIGH);
+  digitalWrite(leftForward, HIGH);
+  digitalWrite(leftBackward, LOW);
+  digitalWrite(rightForward, LOW);
+  digitalWrite(rightBackward, HIGH);
 }
 
 void leftTurn90 () {
   // Turns the bot left 90 degrees
-  digitalWrite(left, LOW);
-  digitalWrite(right, HIGH);
+  digitalWrite(leftForward, LOW);
+  digitalWrite(leftBackward, HIGH);
+  digitalWrite(rightForward, HIGH);
+  digitalWrite(rightBackward, LOW);
   delay(/*x*/); // x to be determined upon testing rotation speed
-  digitalWrite(left, LOW);
-  digitalWrite(right, LOW);
+  stop ();
 }
 
 void rightTurn90 () {
   // Turns the bot right 90 degrees
-  digitalWrite(right, LOW);
-  digitalWrite(left, HIGH);
+  digitalWrite(leftForward, HIGH);
+  digitalWrite(leftBackward, LOW);
+  digitalWrite(rightForward, LOW);
+  digitalWrite(rightBackward, HIGH);
   delay(/*x*/); // x to be determined upon testing rotation speed
-  digitalWrite(left, LOW);
-  digitalWrite(right, LOW);
+  stop ();
 }
