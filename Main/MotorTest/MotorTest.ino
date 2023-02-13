@@ -13,11 +13,13 @@ void setup()
   pinMode(rightBackward , OUTPUT);
 }
 
-void loop()
+void loop ()
 {
-//One pin should be HIGH and the other should be LOW for the motor to turn in one
-  digitalWrite(leftForward , HIGH);
-  digitalWrite(leftBackward , LOW);
+  // For left motor LOW HIGH is forward
+  // For right motor HIGH LOW is forward
+  // Code to move the bot forwards
+  digitalWrite(leftForward , LOW);
+  digitalWrite(leftBackward , HIGH);
   digitalWrite(rightForward , HIGH);
   digitalWrite(rightBackward , LOW);
 }
