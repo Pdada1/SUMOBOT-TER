@@ -41,17 +41,18 @@ Serial.begin(9600);
 void loop() {
   unsigned long d2= sensor1.object_detected();
   unsigned long d3= sensor2.object_detected();
+  Serial.println(d3);
   long snsed=7;//to change for later to cm
   double r2distance=dcalc(snsed,d2,d3);
   if(isnan(r2distance)==true)
   {
-   	if(d3<=d2)
+   	if(d3<=d2 || d2==336)
     {
-      //regard d3 as real distance and calc angle
+      //turn towards the right
     }
     else
     {
-      //regard d2 as real distance and calc angle
+      //turn towards the left
     }
   }
 }
