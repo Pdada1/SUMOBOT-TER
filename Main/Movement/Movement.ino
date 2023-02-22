@@ -8,13 +8,14 @@
 // Motors run in one direction by using digitalWrite with one left and one right
 
 
-
 const int leftForward =  4;
 const int leftBackward = 5;
 const int leftSpeed = 9;
 const int rightForward =  7;
 const int rightBackward =  8;
 const int rightSpeed = 10;
+
+
 Sensor sense = new Sensor();
 void setup()
 {
@@ -60,6 +61,7 @@ void stop ()
   // Brakes if enemy bot has dodged
   analogWrite(leftSpeed, 0);
   analogWrite(rightSpeed, 0);
+
 }
 
 void attack()
@@ -165,3 +167,4 @@ void leftTurn90 () {
   delay(1000); // x to be determined upon testing rotation speed
   stop ();
 }
+
