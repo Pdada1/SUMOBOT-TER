@@ -36,20 +36,23 @@ void loop ()
   // Chooses random direction to turn to make bot movement unpredictable
   int rand = random()%2; // Generates 0 or 1     
   while (!sense.inFront()) {
-    if (rand == 0) {
-      leftTurn();        
+    if (sense.right()) {
+       rightTurn();
+    }
+    else if (sense.left()) {
+       leftTurn();
     }
     else {
-      rightTurn();
+      if (rand == 0) {
+        rightTurn();        
+      }
+      else {
+        leftTurn();
+      }
     }
+    
   }
   attack(); // Aims to knock enemy bot out of circle
-  rightTurn();
-  delay(500);
-  leftTurn();
-  delay(500);
-  stop();
-  delay(1000);
 }
 
 void stop ()
@@ -159,6 +162,6 @@ void leftTurn90 () {
   digitalWrite(rightForward, LOW);
   digitalWrite(rightBackward, HIGH);
   analogWrite(leftSpeed, 255);
-  delay(); // x to be determined upon testing rotation speed
+  delay(1000); // x to be determined upon testing rotation speed
   stop ();
-}*/
+}
