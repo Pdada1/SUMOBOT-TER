@@ -8,6 +8,10 @@
 // Motors run in one direction by using digitalWrite with one left and one right
 
 
+#include <math.h>
+#include <Ultrasonic.h>
+Ultrasonic sensor1(2,3);
+Ultrasonic sensor2(4,5);
 
 const int leftForward =  4;
 const int leftBackward = 5;
@@ -29,7 +33,7 @@ void setup()
   digitalWrite(6, HIGH);  
 }
 
-
+// MOVEMENT METHODS
 
 void stop ()
 {
@@ -38,7 +42,7 @@ void stop ()
   analogWrite(rightSpeed, 0);
 }
 
-/*void attack()
+void attack()
 {
   // Aims to knock enemy bot out of circle
   // Charges
@@ -50,14 +54,15 @@ void stop ()
     moveForward();
   }
   stop();
-}*/
+}
 
-/*void avoidBoundaryLeft () {
+void avoidBoundaryLeft () {
   // Helps the bot avoid danger by moving away when boundary on left
   if (sense.lineLeft()) {
     rightTurn(); // Needs to be 90 degrees through trial and error to ensure we are moving towards inside of circle
     delay(1000);
     moveForward(); // Moves to center of circle to avoid boundary
+    delay(500);
   } 
 }
 
@@ -67,6 +72,7 @@ void avoidBoundaryRight () {
     leftTurn(); // Needs to be 90 degrees through trial and error to ensure we are moving towards inside of circle
     delay(1000);
     moveForward(); // Moves to center of circle to avoid boundary
+    delay(500);
   }
 }
 
@@ -76,8 +82,9 @@ void avoidBoundaryBack () {
     rightTurn(); // Needs to be 180 degrees through trial and error to ensure we are moving towards inside of circle
     delay(2000);
     moveForward(); // Moves to center of circle to avoid boundary
+    delay(500);
   }
-}*/
+}
 
 void moveForward () {
   // Moves bot forward
@@ -111,30 +118,54 @@ void leftTurn()
   analogWrite(rightSpeed, 255);
 }
 
+// SENSOR METHODS
+
+double dcalc(long dsense, long d2, long d3)
+{
+  double s=(dsense+d2+d3)/2;
+  double d=2*sqrt((double)(s*(s-dsense)*(s-d2)*(s-d3)))/(double)(dsense);
+  return d;
+}
+
+// MAIN METHOD THAT CONTROLS PROGRAM
+
 void loop ()
 {
   // Ensures bot is safe by moving away from white line boundary toward center of circle
-  /*avoidBoundaryLeft();
+  
+  unsigned long d2= sensor1.read(CM);
+  unsigned long d3 = sensor2.read(CM);
+  long snsed=2;//to change for later to cm
+  double r2distance=dcalc(snsed,d2,d3);
+  avoidBoundaryLeft();
   avoidBoundaryRight();
-  avoidBoundaryBack();*/
+  avoidBoundaryBack();
   // Turns to get into attacking position when enemy bot is directly in front
   // Chooses random direction to turn to make bot movement unpredictable
-  //int rand = random()%2; // Generates 0 or 1     
-  /*while (!sense.inFront()) {
-    if (sense.right()) {
-       rightTurn();
+  //int rand = random()%2; // Generates 0 or 1
+
+  // Turns the bot to prepare for attack     
+  while (!(r2distance > 0)) {
+    d2 = sensor1.read(CM);
+    d3 = sensor2.read(CM);
+    r2distance = dcalc(snsed,d2,d3);
+    else if (d2 <= d3) {
+      leftTurn();
     }
-    else if (sense.left()) {
-       leftTurn();
+    else if (d3 < d2) {
+      rightTurn();
     }
-    else {
-      if (rand == 0) {
-        rightTurn();        
-      }
-      else {
-        leftTurn();
-      }
-    }*/
-    moveForward();
   }
-  //attack(); // Aims to knock enemy bot out of circle
+
+  // Attacks
+  while (!(r2distance > 0)) {
+    d2 = sensor1.read(CM);
+    d3 = sensor2.read(CM);
+    r2distance = dcalc(snsed,d2,d3);
+    attack(); // Aims to knock enemy bot out of circle
+  }
+
+  // Brakes the bot in case enemy dodges
+  stop();
+}
+ 
