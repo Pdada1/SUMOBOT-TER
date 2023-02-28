@@ -56,34 +56,20 @@ void attack()
   stop();
 }
 
-void avoidBoundaryLeft () {
-  // Helps the bot avoid danger by moving away when boundary on left
-  if (sense.lineLeft()) {
-    rightTurn(); // Needs to be 90 degrees through trial and error to ensure we are moving towards inside of circle
-    delay(1000);
-    moveForward(); // Moves to center of circle to avoid boundary
-    delay(500);
-  } 
-}
-
-void avoidBoundaryRight () {
-  // Helps the bot avoid danger by moving away when boundary on right
-  if (sense.lineRight()) {
-    leftTurn(); // Needs to be 90 degrees through trial and error to ensure we are moving towards inside of circle
-    delay(1000);
-    moveForward(); // Moves to center of circle to avoid boundary
-    delay(500);
-  }
+void avoidBoundaryFront () {
+  // Helps the bot avoid danger by moving away when boundary in front
+  // Code to move the bot backwards
+  analogWrite(leftSpeed, 255);
+  digitalWrite(leftForward, LOW);
+  digitalWrite(leftBackward, HIGH);
+  analogWrite(rightSpeed, 255);
+  digitalWrite(rightForward, LOW);
+  digitalWrite(rightBackward, HIGH);
 }
 
 void avoidBoundaryBack () {
   // Helps the bot avoid danger by moving away when boundary on back
-  while (sense.lineBehind()) {
-    rightTurn(); // Needs to be 180 degrees through trial and error to ensure we are moving towards inside of circle
-    delay(2000);
-    moveForward(); // Moves to center of circle to avoid boundary
-    delay(500);
-  }
+  moveForward();
 }
 
 void moveForward () {
@@ -137,12 +123,22 @@ void loop ()
   unsigned long d3 = sensor2.read(CM);
   long snsed=2;//to change for later to cm
   double r2distance=dcalc(snsed,d2,d3);
-  avoidBoundaryLeft();
-  avoidBoundaryRight();
-  avoidBoundaryBack();
-  // Turns to get into attacking position when enemy bot is directly in front
-  // Chooses random direction to turn to make bot movement unpredictable
-  //int rand = random()%2; // Generates 0 or 1
+  // If r2distance is NaN, then all comparisons involving it will be false
+  // Front sensor
+  int sensorValue1 = analogRead(A0);
+  // Back sensor
+  int sensorValue2 = analogRead(A1);
+  int sensorValue3 = analogRead(A2);
+  while (sensorValue1 > 80 && r2distance < 0) {
+    avoidBoundaryFront();
+    sensorValue1 = analogRead(A1);
+  }
+  while ((sensorValue2 > 80 || sensorValue3 > 80) && r2distance > 0) {
+    avoidBoundaryBack();
+    sensorValue2 = analogRead(A2);
+    sensorValue3 = analogRead(A3);
+  }
+  
 
   // Turns the bot to prepare for attack     
   while (!(r2distance > 0)) {
